@@ -218,7 +218,7 @@ class EditPageScaffold_State extends State<EditPageScaffold> {
             ),
             flexibleSpace: Image.asset(
               'images/appbar_background.png',
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
             backgroundColor: Colors.transparent),
         body: EditPageBody());
@@ -310,13 +310,13 @@ class _EditPageBodyState extends State<EditPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    containerHeight = 20.0;
+    containerHeight = 50.0;
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: viewportConstraints.maxHeight - 100,
+            minHeight: viewportConstraints.maxHeight * 0.8,
           ),
           child: IntrinsicHeight(
             child: Column(
@@ -369,7 +369,7 @@ class _EditPageBodyState extends State<EditPageBody> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue[900])),
                         subtitle: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          padding: const EdgeInsets.fromLTRB(0, 10.0, 0,0),
                           child: Text(
                             dateString,
                             style: TextStyle(
