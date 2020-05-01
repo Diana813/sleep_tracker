@@ -42,8 +42,8 @@ class EditPageBodyState extends State<EditPageBody> {
   bool ifMinuteIsChoosen;
   bool ifHourIsChoosen;
   NumberPicker integerNumberPicker;
-  int sleepDurationHours = 8;
-  int sleepDurationMinutes = 0;
+  int sleepDurationHours;
+  int sleepDurationMinutes;
   int fontColorSleepDuration = 200;
   String dropdownValueSleepType;
   int fontColorSleepType = 200;
@@ -99,7 +99,7 @@ class EditPageBodyState extends State<EditPageBody> {
                                   color: Colors.blueGrey[200],
                                   fontFamily: 'Comfortaa'),
                             ),
-                            value: dropdownValue(),
+                            value: dropdownValueSleepType,
                             icon: Icon(null),
                             underline: Container(
                               height: 0,
@@ -162,7 +162,7 @@ class EditPageBodyState extends State<EditPageBody> {
                             child: GestureDetector(
                               behavior: HitTestBehavior.translucent,
                               child: Text(
-                                createDateMessage(),
+                                createDurationMessage(),
                                 style: TextStyle(
                                     fontSize: 20.0,
                                     color:
@@ -172,12 +172,7 @@ class EditPageBodyState extends State<EditPageBody> {
                               onTap: () {
                                 showDialogHours();
                                 setState(() {
-                                  if (ifHourIsChoosen == false &&
-                                      ifMinuteIsChoosen == false) {
-                                    fontColorSleepDuration = 200;
-                                  } else {
-                                    fontColorSleepDuration = 800;
-                                  }
+                                  setSleepDuration();
                                 });
                               },
                             ),
@@ -267,19 +262,16 @@ class EditPageBodyState extends State<EditPageBody> {
     String timeString;
     DateTime timeMinusSleepDuration;
 
-    timeMinusSleepDuration = DateTime.now().subtract(
-        new Duration(hours: sleepDurationHours, minutes: sleepDurationMinutes));
+    if(sleepDurationHours != null && sleepDurationMinutes != null){
+      timeMinusSleepDuration = DateTime.now().subtract(
+          new Duration(hours: sleepDurationHours, minutes: sleepDurationMinutes));
 
-    timeString = DateFormat('HH:mm').format(timeMinusSleepDuration);
+      timeString = DateFormat('HH:mm').format(timeMinusSleepDuration);
+    }
 
     if (fontColorSleepType != 200 && fontColorSleepDuration != 200) {
       final sleeppingPatternsData = SleepPatternsListItem(
-          timeString,
-          dropdownValueSleepType,
-          sleepDurationHours.toString() +
-              ' hour(s), ' +
-              sleepDurationMinutes.toString() +
-              ' minute(s)');
+          timeString, dropdownValueSleepType, createDurationMessage());
       Navigator.pop(context, sleeppingPatternsData);
     } else {
       Scaffold.of(context).showSnackBar(snackBar);
@@ -327,25 +319,27 @@ class EditPageBodyState extends State<EditPageBody> {
         setState(() {
           ifMinuteIsChoosen = true;
           sleepDurationMinutes = value;
+          setSleepDuration();
         });
         numberPicker.animateInt(value);
       }
     });
   }
 
-  String createDateMessage() {
-    return sleepDurationHours.toString() +
-        'h ' +
-        sleepDurationMinutes.toString() +
-        'min';
-  }
-
-  int setFontColorSleepDuration() {
-    return fontColorSleepDuration;
+  String createDurationMessage() {
+    if (sleepDurationHours != null && sleepDurationMinutes != null) {
+      return sleepDurationHours.toString() +
+          'h ' +
+          sleepDurationMinutes.toString() +
+          'min';
+    } else {
+      return '8h 0min';
+    }
   }
 
   void setSleepDuration() {
-    if (ifHourIsChoosen == false && ifMinuteIsChoosen == false) {
+    if ((ifHourIsChoosen == false && ifMinuteIsChoosen == false) ||
+        sleepDurationHours == null) {
       fontColorSleepDuration = 200;
     } else {
       fontColorSleepDuration = 800;
@@ -355,9 +349,5 @@ class EditPageBodyState extends State<EditPageBody> {
   void setSleepType(String newValue) {
     fontColorSleepType = 800;
     dropdownValueSleepType = newValue;
-  }
-
-  String dropdownValue() {
-    return dropdownValueSleepType;
   }
 }
